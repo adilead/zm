@@ -35,6 +35,18 @@ pub fn forward(Element: type) Vec(3, Element) {
     return Vec(3, Element){ 0, 0, 1 };
 }
 
+pub fn add(self: anytype, other: @TypeOf(self)) @TypeOf(self) {
+    const ones = @as(Vec(dimensions(@TypeOf(self)), VecElement(@TypeOf(self))), @splat(1.0));
+    return @mulAdd(@TypeOf(self), self, ones, other);
+}
+
+pub fn sub(self: anytype, other: @TypeOf(self)) @TypeOf(self) {
+    const T = @TypeOf(self);
+    const ones = @as(Vec(dimensions(@TypeOf(self)), VecElement(@TypeOf(self))), @splat(1.0));
+    const minus_ones = @as(Vec(dimensions(@TypeOf(self)), VecElement(@TypeOf(self))), @splat(-1.0));
+    return @mulAdd(@TypeOf(self), self, ones, @mulAdd(@TypeOf(self), other, minus_ones, zero(dimensions(T), VecElement(T))));
+}
+
 pub fn xyz(self: anytype) @Vector(3, VecElement(@TypeOf(self))) {
     return Vec(3, VecElement(@TypeOf(self))){ self[0], self[1], self[2] };
 }

@@ -77,6 +77,20 @@ test "Vec3 cross" {
     try std.testing.expectEqual(zm.vec.forward(f32), zm.vec.cross(v2, v1));
 }
 
+test "Vec add" {
+    const v1: zm.Vec3 = .{1.0, 2.0, 3.0};
+    const v2: zm.Vec3 = .{4.0, 5.0, 6.0};
+
+    try std.testing.expectEqual(.{5.0, 7.0, 9.0}, zm.vec.add(v1, v2));
+}
+
+test "Vec sub" {
+    const v1: zm.Vec3 = .{1.0, 2.0, 3.0};
+    const v2: zm.Vec3 = .{3.0, 2.0, 1.0};
+
+    try std.testing.expectEqual(.{-2.0, -0.0, 2.0}, zm.vec.sub(v1, v2));
+}
+
 test "Vec distance" {
     const origin = zm.vec.zero(3, f32);
     const up = zm.vec.up(f32);
