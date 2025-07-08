@@ -162,6 +162,12 @@ test "Mat2 scale" {
     try std.testing.expectEqual(zm.Vec2f{ 3, 3 }, m.multiplyVec2(v));
 }
 
+test "Mat3 from Mat4" {
+    const mat4 = zm.Mat4f.identity().scale(3.0);
+    const result = zm.Mat3f.fromMat4(f32, mat4);
+    try std.testing.expectEqual(zm.Mat3f.diagonal(3.0).data, result.data);
+}
+
 test "Mat3 scale" {
     const result = zm.Mat3f.identity().scale(3.0);
     try std.testing.expectEqual(zm.Mat3f.diagonal(3.0).data, result.data);
@@ -194,6 +200,25 @@ test "Mat4 multiply" {
     const m: zm.Mat4f = zm.Mat4f.multiply(m1, m2);
 
     try std.testing.expectEqual(zm.Mat4f.identity().data, m.data);
+}
+
+test "Mat3 inverse" {
+    const m1 = zm.Mat3f{
+        .data = .{
+            1, 2, 2,
+            2, 3, 2,
+            2, 2, 1,
+        },
+    };
+    const m2 = zm.Mat3f{
+        .data = .{
+            1, -2, 2,
+            -2, 3, -2,
+            2, -2, 1,
+        },
+    };
+    const m: zm.Mat3f = zm.Mat3f.inverse(m1);
+    try std.testing.expectEqual(m2.data, m.data);
 }
 
 test "Mat4 inverse" {

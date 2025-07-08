@@ -1,3 +1,4 @@
+const std = @import("std");
 const vec = @import("vector.zig");
 const QuaternionBase = @import("quaternion.zig").QuaternionBase;
 
@@ -170,6 +171,16 @@ pub fn Mat3Base(comptime Element: type) type {
 
         data: DataType,
 
+        pub fn fromMat4(T: type, mat4: Mat4Base(T)) Self {
+            var mat3 = zero();
+            for(0..3) |row| {
+                for(0..3) |col| {
+                    mat3.data[row*3+col] = mat4.data[row*4+col];
+                }
+            }
+            return mat3;
+        }
+
         /// Creates a matrix with all zeroes as values
         pub fn zero() Self {
             return Self{
@@ -302,6 +313,50 @@ pub fn Mat3Base(comptime Element: type) type {
             }
 
             return result;
+        }
+
+        pub fn determinant(self: Self) Element {
+           return self.data[0] * (self.data[4] * self.data[8] - self.data[5] * self.data[7]) -
+                  self.data[1] * (self.data[3] * self.data[8] - self.data[5] * self.data[6]) +
+                  self.data[2] * (self.data[3] * self.data[7] - self.data[4] * self.data[6]);
+        }
+
+        pub fn inverse(self: Self) Self {
+            const a = self.data[0];
+            const b = self.data[1];
+            const c = self.data[2];
+            const d = self.data[3];
+            const e = self.data[4];
+            const f = self.data[5];
+            const g = self.data[6];
+            const h = self.data[7];
+            const i = self.data[8];
+            
+            const A = e * i - f * h;
+            const B = f * g - d * i;
+            const C = d * h - e * g;
+            const D = c * h - b * i;
+            const E = a * i - c * g;
+            const F = b * g - a * h;
+            const G = b * f - c * e;
+            const H = c * d - a * f;
+            const I = a * e - b * d;
+            
+            const inv_det = 1.0 / (a * A + b * B + c * C);
+            
+            return Self{
+                .data = .{
+                    A * inv_det,
+                    D * inv_det,
+                    G * inv_det,
+                    B * inv_det,
+                    E * inv_det,
+                    H * inv_det,
+                    C * inv_det,
+                    F * inv_det,
+                    I * inv_det,
+                },
+            };
         }
     };
 }
